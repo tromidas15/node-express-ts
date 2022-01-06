@@ -3,6 +3,7 @@ import { Request , Response } from "express";
 import UserService from '../services/userService';
 import BaseController from "./BaseController";
 import {ErrorFormat} from "./Interfaces"
+import { decode } from "jsonwebtoken";
  
 export default class UserController extends BaseController {
 
@@ -20,10 +21,10 @@ export default class UserController extends BaseController {
 
         const error : ErrorFormat[]|null  = this.validator.validateCreate(request.body);
         const userExists : ErrorFormat[]|null = await this.validator.checkUserExists(email)
-        let isError : ErrorFormat[]|null  = error || userExists
+        let errorMessage : ErrorFormat[]|null  = error || userExists
 
-        if (isError) {
-            return this.errorResponse(isError);
+        if (errorMessage) {
+            return this.errorResponse(errorMessage);
         }
 
         try{
@@ -49,18 +50,24 @@ export default class UserController extends BaseController {
         const {name, email} = request.body;
 
         const error : ErrorFormat[]|null  = this.validator.validateCreate(request.body);
-        const userExists : ErrorFormat[]|null = await this.validator.checkUserExists(email)
-        let isError : ErrorFormat[]|null  = error || userExists
+        const token : any= decode(request.header('auth-token') ?? '');
 
-        if (isError) {
-            return this.errorResponse(isError);
+        if(!token) {
+            return this.forbiddenResponse();
+        }
+        
+        const userExists : ErrorFormat[]|null = await this.validator.checkUserExists(email , token._id)
+        let errorMessage : ErrorFormat[]|null  = error || userExists
+
+        if (errorMessage) {
+            return this.errorResponse(errorMessage);
         }
 
         try{
             let data = await this.userService.updateUser(request.params.id ,name, email)
+
             return this.successResponse(data, null);
         }catch(err) {
-            console.log(err);
             return this.apiErrorResponse(err)
         }
     }

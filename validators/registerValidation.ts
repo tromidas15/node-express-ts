@@ -1,4 +1,5 @@
 import Joi , {ValidationResult} from "@hapi/joi";
+import { isValidObjectId, Types } from "mongoose";
 import { ErrorFormat } from "../Controller/Interfaces";
 import UserModel from '../models/userModel';
 import BaseValidator from "./baseValidator";
@@ -37,8 +38,10 @@ export default class ValidateUserRegister extends BaseValidator {
           return null;
   }
 
-  public async checkUserExists(email : string) : Promise<null|ErrorFormat[]> {
-    let user = await UserModel.findOne({email});
+  public async checkUserExists(email : string , id: string|null = null) : Promise<null|ErrorFormat[]> {
+
+    let user = await UserModel.findOne({email : email ,  _id: { $ne: new Types.ObjectId(id ?? '') }});
+    console.log(user, new Types.ObjectId(id ?? ''))
       if (user){
         return  [
             {

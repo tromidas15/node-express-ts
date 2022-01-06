@@ -13,20 +13,20 @@ export default class UserService {
         this.userRepository = new UserRepository();
     }
 
-    async create( name: string, email: string, password: string) {
+    async create( name: string, email: string, password: string) : Promise<UserModelType|null>  {
             password = await this.encryptPassword(password);
             const user = new userModel({
                 name, email, password 
             });
         
             const data = await user.save();
+
             return data;
     }
 
     async updateUser( id:string ,name: string, email: string) : Promise<UserModelType|null> {
 
-        const user = await this.userRepository.updateUser(id ,email, name )
-
+        const user = await this.userRepository.updateUser(id ,email, name );
         return user;
     }
 

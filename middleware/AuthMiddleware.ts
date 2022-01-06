@@ -14,7 +14,7 @@ export function authMiddleware(req: Request,res: Response,next: NextFunction){
     }
 
     try {
-        const isValidToken = verify(token , process.env.APP_SECRET);
+        verify(token , process.env.APP_SECRET);
         next();
     }catch(error) {
         return res.status(400).send('Invalid Token');

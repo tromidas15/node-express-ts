@@ -12,7 +12,6 @@ export interface PaginationInterface {
 
 export interface ResponseFormat {
     data: any,
-    isError : boolean,
     errorMessages : null|ErrorFormat[],
     pagination : null|PaginationInterface
 }

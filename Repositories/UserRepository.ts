@@ -1,6 +1,10 @@
 import UserModel, { UserModelType } from "../models/userModel";
 
 export default class UserRepository {
+    protected visible : string[] = [
+        'name' , 'email' , '_id'
+    ]
+
     public async updateUser(id:string,  email:string, name:string): Promise<UserModelType|null> {
         let user = await this.findUserById(id);
 
@@ -13,6 +17,6 @@ export default class UserRepository {
     }
 
     public async findUserById(id:string) {
-        return await UserModel.findOne({_id : id});
+        return await UserModel.findOne({_id : id}).select(this.visible.join(' '));
     }
 }

@@ -11,17 +11,20 @@ export default abstract class BaseController {
     }
     
     public errorResponse(errors : ErrorFormat[]): Response {
-        return this.resp.status(400).json(this.buildRessponse(null,  null , true , errors))  
+        return this.resp.status(400).json(this.buildRessponse(null,  null , errors))  
+    }
+
+    public forbiddenResponse(): Response {
+        return this.resp.status(403).json('Unautorized')  
     }
 
     public apiErrorResponse(error: any): Response {
         return this.resp.status(404).json(error)  
     }
 
-    protected buildRessponse(data : any , pagination : null|PaginationInterface = null, isError : boolean = false, errorMessages : null|ErrorFormat[] = null) : ResponseFormat {
+    protected buildRessponse(data : any , pagination : null|PaginationInterface = null, errorMessages : null|ErrorFormat[] = null) : ResponseFormat {
         return {
             data,
-            isError,
             errorMessages,
             pagination,
         }

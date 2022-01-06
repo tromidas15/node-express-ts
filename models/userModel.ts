@@ -3,8 +3,7 @@ import {Schema , model} from "mongoose";
 export type UserModelType = {
     name : string,
     email : string,
-    password: string,
-    created_at: Date 
+    _id : string
 }
 
 const UserSchema: Schema = new Schema({
