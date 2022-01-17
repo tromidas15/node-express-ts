@@ -2,7 +2,7 @@ import { Response } from "express";
 import { PaginationInterface, ErrorFormat ,ResponseFormat  } from "./Interfaces";
 
 export default abstract class BaseController {
-    private resp : Response;
+    protected resp : Response;
     constructor(resp : Response) {
         this.resp = resp
     }
@@ -18,8 +18,17 @@ export default abstract class BaseController {
         return this.resp.status(403).json('Unautorized')  
     }
 
+    public entityNotFound(): Response {
+        return this.resp.status(400).json('Not found')  
+    }
+
+
     public apiErrorResponse(error: any): Response {
         return this.resp.status(404).json(error)  
+    }
+
+    public serverError(): Response {
+        return this.resp.status(500);  
     }
 
     protected buildRessponse(data : any , pagination : null|PaginationInterface = null, errorMessages : null|ErrorFormat[] = null) : ResponseFormat {

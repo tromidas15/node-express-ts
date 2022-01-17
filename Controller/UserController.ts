@@ -20,11 +20,9 @@ export default class UserController extends BaseController {
         const {name, email, password} = request.body;
 
         const error : ErrorFormat[]|null  = this.validator.validateCreate(request.body);
-        const userExists : ErrorFormat[]|null = await this.validator.checkUserExists(email)
-        let errorMessage : ErrorFormat[]|null  = error || userExists
 
-        if (errorMessage) {
-            return this.errorResponse(errorMessage);
+        if (error) {
+            return this.errorResponse(error);
         }
 
         try{
@@ -49,18 +47,15 @@ export default class UserController extends BaseController {
     public async update(request:Request): Promise<Response> {
         const {name, email} = request.body;
 
-        const error : ErrorFormat[]|null  = this.validator.validateCreate(request.body);
+        const error : ErrorFormat[]|null  = this.validator.validateUpdate(request.body);
         const token : any= decode(request.header('auth-token') ?? '');
 
         if(!token) {
             return this.forbiddenResponse();
         }
         
-        const userExists : ErrorFormat[]|null = await this.validator.checkUserExists(email , token._id)
-        let errorMessage : ErrorFormat[]|null  = error || userExists
-
-        if (errorMessage) {
-            return this.errorResponse(errorMessage);
+        if (error) {
+            return this.errorResponse(error);
         }
 
         try{

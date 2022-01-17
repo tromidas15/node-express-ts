@@ -1,3 +1,4 @@
+import { ObjectSchema } from "@hapi/joi";
 import { ErrorFormat } from "../Controller/Interfaces";
 
 export default abstract class BaseValidator {
@@ -10,6 +11,16 @@ export default abstract class BaseValidator {
                 })
         
                 return format
+        }
+
+        protected validate(schema : ObjectSchema , data : any) {
+                let {error} = schema.validate(data , {abortEarly: false});
+                
+                if(error)  {
+                  return this.buildApiErrorResponse(error);
+                }
+
+                return null;
         }
 
         abstract validateCreate(data: any) : null|ErrorFormat[];

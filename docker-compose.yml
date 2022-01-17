@@ -1,0 +1,34 @@
+version: '3'
+services:
+  nginx:
+    restart: always
+    build:
+      context: ./
+      dockerfile: Docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+  nodejs-api:
+    container_name: nodejs-api
+    build:
+      context: ./
+      dockerfile: Docker/web/Dockerfile
+    volumes:
+      - .:/var/www
+      - /var/www/node_modules
+    ports:
+      - "8080:8080"
+    tty: true
+    restart: unless-stopped
+    links:
+      - mongodb
+  mongodb:
+    image : mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+    - ./database:/data/db
+    ports:
+    - 27017:27017
+    restart: unless-stopped
